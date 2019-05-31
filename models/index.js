@@ -3,6 +3,7 @@ const db = {};
 const fs = require("fs");
 const path = require("path");
 const basename = path.basename(__filename);
+// const config = require(__dirname + "/../config/config.json")[env];
 
 const database = require("../config/config.json").database;
 const PASSWORD = database.password;
