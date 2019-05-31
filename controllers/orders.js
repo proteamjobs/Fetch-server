@@ -26,7 +26,7 @@ module.exports = {
           orderList.orderList.push(temp);
         });
         console.log(orderList.orderList);
-        res.send(orderList.orderList);
+        res.send(orderList);
       } catch (err) {
         console.log("ERROR ::: ", err);
       }
