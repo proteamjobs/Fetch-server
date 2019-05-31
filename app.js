@@ -12,14 +12,14 @@ const travelsRouter = require("./routes/travels");
 const directmessagesRouter = require("./routes/directmessages");
 const reviewsRouter = require("./routes/reviews");
 const noticeRouter = require("./routes/notice");
+const parcelsRouter = require("./routes/parcels");
+const notificationsRouter = require("./routes/notifications");
 
 const app = express();
 app.use(cors());
 
 app.use(logger("dev"));
-// app.use(express.json());
 app.use(bodyParser.json());
-// app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
@@ -31,6 +31,8 @@ app.use("/travels", travelsRouter);
 app.use("/directmessages", directmessagesRouter);
 app.use("/reviews", reviewsRouter);
 app.use("/notice", noticeRouter);
+app.use("/parcels", parcelsRouter);
+app.use("/notifications", notificationsRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`listening to port ${PORT}...`));
