@@ -56,7 +56,21 @@ app.use("/notifications", notificationsRouter);
 //   });
 // };
 
+// const test2 = () => {
+//   db.orders.create({
+//     name: "유요한의 셔츠",
+//     destination: "체코",
+//     price: 60000000,
+//     due: "2019-08-10",
+//     quantity: 1,
+//     preferParcel: true,
+//     description: "체코에서 판다고 하네요. 급해요 !!!",
+//     buyer_id: 4
+//   });
+// };
+
 // test();
+// test2();
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`listening to port ${PORT}...`));
