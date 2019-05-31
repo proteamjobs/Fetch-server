@@ -3,9 +3,9 @@ const db = require("../models");
 module.exports = {
   list: {
     get: async (req, res) => {
-      console.log(req.query);
-      let orderList = {
-        orderList: []
+      // console.log(req.query);
+      let tempObj = {
+        tempArr: []
       };
       try {
         let test = await db.orders.findAll();
@@ -23,10 +23,21 @@ module.exports = {
             due: item.dataValues.due,
             status: item.dataValues.status
           };
-          orderList.orderList.push(temp);
+          tempObj.tempArr.push(temp);
         });
-        console.log(orderList.orderList);
-        res.send(orderList);
+        // console.log(orderList.orderList.reverse());
+        tempObj.tempArr.reverse();
+        if (req.query.max) {
+          let orderList = {
+            orderList: []
+          };
+          for (let i = 0; i < req.query.max; i++) {
+            orderList.orderList.push(tempObj.tempArr[i]);
+          }
+          res.send(orderList);
+        } else {
+          res.send(tempObj);
+        }
       } catch (err) {
         console.log("ERROR ::: ", err);
       }
