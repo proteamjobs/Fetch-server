@@ -1,12 +1,18 @@
+const fakeDataOrdersList = require("../fakeData/fakeDataOrdersList.js");
+
 module.exports = {
   list: {
     get: (req, res) => {
-      res.status(201).send("GET /orders/list OK!");
+      if (req.query.max) {
+        res.status(200).send(fakeDataOrdersList);
+      } else {
+        res.status(200).send("GET /orders/list OK!");
+      }
     }
   },
   detail: {
     get: (req, res) => {
-      res.status(201).send("GET /orders/detail OK!");
+      res.status(200).send("GET /orders/detail OK!");
     }
   },
   create: {
