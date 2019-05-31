@@ -36,7 +36,7 @@ module.exports = {
   },
   detail: {
     get: (req, res) => {
-      res.status(201).send("GET /orders/detail OK!");
+      res.status(200).send("GET /orders/detail OK!");
     }
   },
   create: {
