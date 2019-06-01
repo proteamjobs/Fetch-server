@@ -6,11 +6,11 @@ module.exports = {
   list: {
     get: async (req, res) => {
       try {
-        let tempObj = {
-          tempArr: []
+        let order = {
+          orderList: []
         };
-        let test = await db.orders.findAll();
-        test.map(item => {
+        let list = await db.orders.findAll();
+        list.map(item => {
           let temp = {
             order_id: item.dataValues._id,
             productName: item.dataValues.name,
@@ -20,29 +20,24 @@ module.exports = {
             due: item.dataValues.due,
             status: item.dataValues.status
           };
-          tempObj.tempArr.push(temp);
+          order.orderList.push(temp);
         });
 
-        for (let i = 0; i < tempObj.tempArr.length; i++) {
+        for (let i = 0; i < order.orderList.length; i++) {
           let imgUrl = await db.productimgs.findOne({
-            where: { order_id: tempObj.tempArr[i].order_id },
+            where: { order_id: order.orderList[i].order_id },
             attributes: ["imgUrl"]
           });
-          tempObj.tempArr[i].imageUrl = imgUrl.imgUrl;
+          order.orderList[i].imageUrl = imgUrl.imgUrl;
         }
 
-        tempObj.tempArr.reverse();
+        order.orderList.reverse();
 
         if (req.query.max) {
-          let orderList = {
-            orderList: []
-          };
-          for (let i = 0; i < req.query.max; i++) {
-            orderList.orderList.push(tempObj.tempArr[i]);
-          }
-          res.send(orderList);
+          order.orderList = order.orderList.splice(0, req.query.max);
+          res.send(order);
         } else {
-          res.send(tempObj);
+          res.send(order);
         }
       } catch (err) {
         console.log("ERROR ::: ", err);
@@ -52,12 +47,57 @@ module.exports = {
     }
   },
   detail: {
-    get: (req, res) => {
-      res.status(200).send("GET /orders/detail OK!");
+    get: async (req, res) => {
+      try {
+        let orderDetail = {
+          requester: {}
+        };
+        let tempArr = [];
+
+        let list = await db.orders.findOne({
+          where: { _id: req.query.order_id }
+        });
+
+        let user = await db.users.findOne({
+          where: {
+            _id: list.dataValues.buyer_id
+          }
+        });
+
+        let imageList = await db.productimgs.findAll({
+          where: {
+            order_id: list._id
+          },
+          attributes: ["imgUrl"]
+        });
+
+        for (let i = 0; i < imageList.length; i++) {
+          tempArr.push(imageList[i].dataValues.imgUrl);
+        }
+
+        orderDetail.productName = list.dataValues.name;
+        orderDetail.destination = list.dataValues.destination;
+        orderDetail.price = list.dataValues.price;
+        orderDetail.quantity = list.dataValues.quantity;
+        orderDetail.referenceUrl = list.dataValues.referenceUrl;
+        orderDetail.description = list.dataValues.description;
+        orderDetail.requester.ID = user.dataValues._id;
+        orderDetail.requester.imageUrl = user.dataValues.image;
+        orderDetail.requester.name = user.dataValues.name;
+        orderDetail.imageUrls = tempArr;
+
+        res.status(200).send(orderDetail);
+      } catch (err) {
+        console.log("ERROR ::: ", err);
+        res.status(400).send(err);
+      }
+
+      // res.status(200).send("GET /orders/detail OK!");
     }
   },
   create: {
     post: (req, res) => {
+      console.log(req.body);
       res.status(201).send("POST /orders/create OK!");
     }
   },
