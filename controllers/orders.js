@@ -97,8 +97,25 @@ module.exports = {
   },
   create: {
     post: (req, res) => {
-      console.log(req.body);
-      res.status(201).send("POST /orders/create OK!");
+      let temp = req.body;
+      db.orders
+        .create({
+          name: temp.productName,
+          destination: temp.destination,
+          price: temp.price,
+          due: temp.due,
+          quantity: temp.quantity,
+          preferParcel: temp.preferParcel,
+          description: temp.description,
+          buyer_id: 3
+        })
+        .then(() => {
+          res.status(201).send("POST /orders/create OK!");
+        })
+        .catch(err => {
+          res.status(400).send(err);
+          console.log(err);
+        });
     }
   },
   addapplier: {
