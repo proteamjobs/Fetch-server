@@ -1,23 +1,20 @@
 const db = require("../models");
+// const fs = require("fs");
+// const path = require("path");
 
 module.exports = {
   list: {
     get: async (req, res) => {
-      // console.log(req.query);
-      let tempObj = {
-        tempArr: []
-      };
       try {
+        let tempObj = {
+          tempArr: []
+        };
         let test = await db.orders.findAll();
-        // console.log(test);
         test.map(item => {
-          // orderList.orderList.push(item)
-          // console.log(item.dataValues);
           let temp = {
             order_id: item.dataValues._id,
             productName: item.dataValues.name,
-            imageUrl:
-              "https://image.fmkorea.com/files/attach/images/4180795/534/788/062/b5857298727c13789b3cdd9cc365ceef.jpg",
+            // imageUrl: "http://localhost:3001/public/image/gucci.jpg",
             destination: item.dataValues.destination,
             price: item.dataValues.price,
             due: item.dataValues.due,
@@ -25,8 +22,17 @@ module.exports = {
           };
           tempObj.tempArr.push(temp);
         });
-        // console.log(orderList.orderList.reverse());
+
+        for (let i = 0; i < tempObj.tempArr.length; i++) {
+          let imgUrl = await db.productimgs.findOne({
+            where: { order_id: tempObj.tempArr[i].order_id },
+            attributes: ["imgUrl"]
+          });
+          tempObj.tempArr[i].imageUrl = imgUrl.imgUrl;
+        }
+
         tempObj.tempArr.reverse();
+
         if (req.query.max) {
           let orderList = {
             orderList: []
