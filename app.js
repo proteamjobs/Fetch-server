@@ -69,8 +69,16 @@ app.use("/notifications", notificationsRouter);
 //   });
 // };
 
+// const test3 = () => {
+//   db.productimgs.create({
+//     order_id: 8,
+//     imgUrl: "http://server.fetcher.fun/image/yyh_s.jpg"
+//   });
+// };
+
 // test();
 // test2();
+// test3();
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`listening to port ${PORT}...`));
