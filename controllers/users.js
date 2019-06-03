@@ -1,31 +1,151 @@
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
+const jwtSecret = require("../config/jwtConfig");
+const db = require("../models");
+
 module.exports = {
   info: {
-    get: (req, res) => {
-      res.send("GET /users/info OK!");
+    get: async (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          console.log("ERROR /users/info : ", err);
+        }
+        if (info !== undefined) {
+          let responseData = {
+            success: false,
+            message: info.message
+          };
+          res.status(200).send(responseData);
+        } else {
+          console.log("User found in DB!");
+
+          // {
+          //   success: Boolean,
+          //   userInfo: {
+          //     email: String,
+          //     stars: Number,
+          //     name: String,
+          //     imageUrl: String,
+          //     reviewList: [ {
+          //       to: String,
+          //       from: String
+          //       stars: Number,
+          //       message: String,
+          //       date: String
+          //     } ]
+          //   }
+          // }
+
+          // TODO stars, reviewList 관련 내용 추가 필요
+          let responseData = {
+            success: true,
+            userInfo: {
+              email: user.email,
+              name: user.name,
+              imageUrl: user.image
+            }
+          };
+          res.status(200).send(responseData);
+        }
+      })(req, res, next);
     }
   },
   signin: {
-    post: (req, res) => {
-      res.status(201).send(`POST /users/signin OK! body :: ${req.body}`);
+    post: (req, res, next) => {
+      passport.authenticate("login", (err, user, info) => {
+        if (err) {
+          console.log("ERROR /users/signin : ", err);
+        }
+
+        if (info !== undefined) {
+          let responseData = {
+            success: false,
+            error: info.message
+          };
+          res.status(201).send(responseData);
+        } else {
+          req.logIn(user, err => {
+            // Sequlize DB Serch
+            db.users
+              .findOne({
+                where: {
+                  email: user.email
+                }
+              })
+              .then(user => {
+                // Make JWT
+                const token = jwt.sign(
+                  { email: user.email, name: user.name, image: user.image },
+                  jwtSecret.secret
+                );
+                res.status(201).send({
+                  success: true,
+                  token: token
+                });
+              });
+          });
+        }
+      })(req, res, next);
     }
   },
   deleteaccount: {
-    delete: (req, res) => {
-      res
-        .status(201)
-        .send(`DELETEd /users/deleteaccount OK! body :: ${req.body}`);
+    delete: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          console.log("ERROR /users/info : ", err);
+        }
+        if (info !== undefined) {
+          res.status(201).send({
+            success: false
+          });
+        } else {
+          db.users
+            .destroy({ where: { _id: user._id } })
+            .then(() => {
+              res.status(201).send({ success: true });
+            })
+            .catch(err => {
+              res.status(201).send({ success: false, err: err });
+            });
+        }
+      })(req, res, next);
     }
   },
   register: {
-    post: (req, res) => {
-      res.status(201).send("POST users/signup/register OK!");
+    post: (req, res, next) => {
+      passport.authenticate("register", (err, user, info) => {
+        if (err) {
+          res.status(201).send("ERROR /users/signin : ", err);
+        }
+
+        if (info !== undefined) {
+          res.status(201).send({
+            success: false,
+            message: info.message
+          });
+        } else {
+          req.logIn(user, err => {
+            res.status(201).send(user);
+          });
+        }
+      })(req, res, next);
     }
   },
   checkemail: {
     get: (req, res) => {
-      res
-        .status(201)
-        .send(`GET users/signup/checkemail OK! body :: ${req.body}`);
+      db.users
+        .findOne({
+          where: {
+            email: req.query.email
+          }
+        })
+        .then(user => {
+          if (!user) {
+            res.status(200).send({ exist: false });
+          } else {
+            res.status(200).send({ exist: true });
+          }
+        });
     }
   },
   changeprofile: {

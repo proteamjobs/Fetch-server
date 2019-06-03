@@ -17,6 +17,7 @@ const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, {
   host: HOST,
   dialect: DIALECT,
   port: PORT,
+  timezone: "Asia/Seoul",
   define: {
     timestamps: true
   }
