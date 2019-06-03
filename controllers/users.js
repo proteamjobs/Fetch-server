@@ -125,7 +125,9 @@ module.exports = {
           });
         } else {
           req.logIn(user, err => {
-            res.status(201).send(user);
+            res.status(201).send({
+              success: true
+            });
           });
         }
       })(req, res, next);
