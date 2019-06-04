@@ -12,7 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      social_id: {
+      google_id: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      facebook_id: {
         type: DataTypes.STRING,
         allowNull: true
       },
