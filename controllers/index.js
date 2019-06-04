@@ -6,8 +6,10 @@ const reviews = require("./reviews");
 const notice = require("./notice");
 const notifications = require("./notifications");
 const parcels = require("./parcels");
+const auth = require("./auth");
 
 module.exports = {
+  auth,
   users,
   orders,
   travels,

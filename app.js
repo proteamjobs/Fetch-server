@@ -15,12 +15,13 @@ const reviewsRouter = require("./routes/reviews");
 const noticeRouter = require("./routes/notice");
 const parcelsRouter = require("./routes/parcels");
 const notificationsRouter = require("./routes/notifications");
+const authRouter = require("./routes/auth");
 
 let db = require("./models/index.js");
 
 db.sequelize
   .sync()
-  //   .sync({ force: true })
+  // .sync({ force: true })
   .then(() => {
     console.log(" DB Connect!");
   })
@@ -51,6 +52,7 @@ app.use("/reviews", reviewsRouter);
 app.use("/notice", noticeRouter);
 app.use("/parcels", parcelsRouter);
 app.use("/notifications", notificationsRouter);
+app.use("/auth", authRouter);
 
 // const test = () => {
 //   db.users.create({
