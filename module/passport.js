@@ -2,10 +2,48 @@ const BCRIPT_SALT_ROUNDS = 12;
 const jwtSecret = require("../config/jwtConfig");
 const db = require("../models");
 const bcrypt = require("bcrypt");
+const GOOGLE_KEY = require("../config/config").google.web;
 const passport = require("passport"),
   localStrategy = require("passport-local").Strategy,
   JWTstrategy = require("passport-jwt").Strategy,
-  ExtractJWT = require("passport-jwt").ExtractJwt;
+  ExtractJWT = require("passport-jwt").ExtractJwt,
+  GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: GOOGLE_KEY.client_id,
+      clientSecret: GOOGLE_KEY.client_secret,
+      callbackURL: GOOGLE_KEY.redirect_uris[0],
+      passReqToCallback: true
+    },
+    (req, ccessToken, refreshToken, profile, email, done) => {
+      db.users
+        .findOne({
+          where: {
+            google_id: email.id
+          }
+        })
+        .then(user => {
+          if (!user) {
+            console.log("Don't have user!");
+            return done(null, email);
+          } else {
+            console.log("We have user!");
+            return done(null, false);
+          }
+          // console.log(user);
+          // if (user) {
+          //   console.log("USER!!!");
+          //   return done(null, false, { message: "This user is already!" });
+          // } else {
+          //   console.log("NO USER..");
+          //   return done(null, user);
+          // }
+        });
+    }
+  )
+);
 
 passport.use(
   "register",
