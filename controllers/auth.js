@@ -21,7 +21,24 @@ module.exports = {
           },
           (err, email, info) => {
             // res.redirect("/auth");
-            console.log(email);
+            if (email) {
+              console.log(email);
+              let userData = {
+                success: true,
+                message: "Don't have user!",
+                google_id: parseInt(email.id),
+                email: email.emails[0].value,
+                name: email.displayName,
+                provider: email.provider,
+                imageURL: email.photos[0].value
+              };
+              console.log("userData :: ", userData);
+              res.status(200).json(userData);
+            } else {
+              res
+                .status(200)
+                .json({ success: false, message: "Already user!" });
+            }
             console.log("/google/callback");
           }
         )(req, res, next);
