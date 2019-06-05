@@ -13,16 +13,14 @@ module.exports = {
     },
     callback: {
       get: (req, res, next) => {
-        // console.log(req.body);
         passport.authenticate(
           "google",
           {
             session: false
           },
           (err, email, info) => {
-            // res.redirect("/auth");
             if (email) {
-              console.log(email);
+              // console.log(email);
               let userData = {
                 success: true,
                 message: "Don't have user!",
@@ -32,12 +30,12 @@ module.exports = {
                 provider: email.provider,
                 imageURL: email.photos[0].value
               };
-              console.log("userData :: ", userData);
-              res.status(200).json(userData);
+              // console.log("userData :: ", userData);
+              res.status(200).send(userData);
             } else {
               res
                 .status(200)
-                .json({ success: false, message: "Already user!" });
+                .send({ success: false, message: "Already user!" });
             }
             console.log("/google/callback");
           }
