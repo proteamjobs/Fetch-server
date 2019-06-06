@@ -18,7 +18,7 @@ module.exports = {
             session: false
           },
           (err, email, info) => {
-            if (email) {
+            if (email.hasOwnProperty("displayName")) {
               let userData = {
                 isUser: false,
                 message: "Don't have user!",
@@ -31,18 +31,19 @@ module.exports = {
 
               res.status(200).send(userData);
             } else {
-              console.log("Auth emails :::: ", email);
               const token = jwt.sign(
                 {
-                  email: email.emails[0].value,
-                  name: email.displayName,
-                  image: email.photos[0].value
+                  email: email.email,
+                  name: email.name,
+                  image: email.image
                 },
                 jwtSecret.secret
               );
               res.status(200).send({
                 isUser: true,
-                token: token
+                token: token,
+                userDB_id: email._id,
+                userDB_name: email.name
               });
             }
           }
