@@ -47,6 +47,7 @@ passport.use(
       session: false
     },
     (req, email, password, done) => {
+      console.log("0 req.body :: ", req.body);
       try {
         db.users
           .findOne({

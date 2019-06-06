@@ -30,6 +30,7 @@ module.exports = {
                 provider: email.provider,
                 image: email.photos[0].value
               };
+
               res.status(200).send(userData);
             } else {
               const token = jwt.sign(
