@@ -60,14 +60,14 @@ passport.use(
             } else {
               bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
                 if (req.body.provider === "google") {
+                  console.log(req.body);
                   db.users
                     .create({
                       email: email,
-                      password: hashedPassword,
                       name: req.body.name,
                       provider: req.body.provider,
                       google_id: req.body.socialId,
-                      imageURL: req.body.imageURL
+                      image: req.body.imageURL
                     })
                     .then(user => {
                       return done(null, user);
