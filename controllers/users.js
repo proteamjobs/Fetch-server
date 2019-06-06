@@ -65,6 +65,7 @@ module.exports = {
           res.status(201).send(responseData);
         } else {
           req.logIn(user, err => {
+            console.log("USER :: ", user);
             // Sequlize DB Serch
             db.users
               .findOne({
@@ -80,7 +81,9 @@ module.exports = {
                 );
                 res.status(201).send({
                   success: true,
-                  token: token
+                  token: token,
+                  userDB_id: user._id,
+                  userDB_name: user.name
                 });
               });
           });
@@ -113,17 +116,23 @@ module.exports = {
   },
   register: {
     post: (req, res, next) => {
+      console.log("3 req.body");
       passport.authenticate("register", (err, user, info) => {
+        console.log("4 req.body");
+
         if (err) {
           res.status(201).send("ERROR /users/signin : ", err);
         }
 
         if (info !== undefined) {
+          console.log("5 req.body");
+
           res.status(201).send({
             success: false,
-            message: info.message
+            message: info.message + "111"
           });
         } else {
+          console.log("6 req.body");
           req.logIn(user, err => {
             res.status(201).send({
               success: true
