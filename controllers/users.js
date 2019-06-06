@@ -65,7 +65,6 @@ module.exports = {
           res.status(201).send(responseData);
         } else {
           req.logIn(user, err => {
-            console.log("USER :: ", user);
             // Sequlize DB Serch
             db.users
               .findOne({
