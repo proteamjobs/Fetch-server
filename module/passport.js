@@ -32,14 +32,6 @@ passport.use(
             console.log("We have user!");
             return done(null, false);
           }
-          // console.log(user);
-          // if (user) {
-          //   console.log("USER!!!");
-          //   return done(null, false, { message: "This user is already!" });
-          // } else {
-          //   console.log("NO USER..");
-          //   return done(null, user);
-          // }
         });
     }
   )
@@ -67,16 +59,31 @@ passport.use(
               return done(null, false, { message: "This user is already!" });
             } else {
               bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
-                db.users
-                  .create({
-                    email: email,
-                    password: hashedPassword,
-                    name: req.body.name,
-                    provider: "fetcher"
-                  })
-                  .then(user => {
-                    return done(null, user);
-                  });
+                if (req.body.google_id !== undefined) {
+                  db.users
+                    .create({
+                      email: email,
+                      password: hashedPassword,
+                      name: req.body.name,
+                      provider: req.body.provider,
+                      google_id: req.body.google_id,
+                      imageURL: req.body.imageURL
+                    })
+                    .then(user => {
+                      return done(null, user);
+                    });
+                } else {
+                  db.users
+                    .create({
+                      email: email,
+                      password: hashedPassword,
+                      name: req.body.name,
+                      provider: "fetcher"
+                    })
+                    .then(user => {
+                      return done(null, user);
+                    });
+                }
               });
             }
           });
