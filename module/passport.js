@@ -47,7 +47,6 @@ passport.use(
       session: false
     },
     (req, email, password, done) => {
-      console.log("0 req.body :: ", req.body);
       try {
         db.users
           .findOne({
@@ -59,10 +58,10 @@ passport.use(
             if (user !== null) {
               return done(null, false, { message: "This user is already!" });
             } else {
-              bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
-                console.log("1 req.body :: ", req.body);
+              if (password === "social login") {
+                console.log("SOCIAL REGISTER !!!");
                 if (req.body.provider === "google") {
-                  console.log("2 req.body :: ", req.body);
+                  console.log("GOOGLE !!!");
                   db.users
                     .create({
                       email: email,
@@ -74,19 +73,24 @@ passport.use(
                     .then(user => {
                       return done(null, user);
                     });
-                } else {
-                  db.users
-                    .create({
-                      email: email,
-                      password: hashedPassword,
-                      name: req.body.name,
-                      provider: "fetcher"
-                    })
-                    .then(user => {
-                      return done(null, user);
-                    });
                 }
-              });
+              } else {
+                console.log("LOCAL REGISTER !!!");
+                bcrypt
+                  .hash(password, BCRIPT_SALT_ROUNDS)
+                  .then(hashedPassword => {
+                    db.users
+                      .create({
+                        email: email,
+                        password: hashedPassword,
+                        name: req.body.name,
+                        provider: "fetcher"
+                      })
+                      .then(user => {
+                        return done(null, user);
+                      });
+                  });
+              }
             }
           });
       } catch (err) {

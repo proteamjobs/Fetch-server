@@ -116,23 +116,17 @@ module.exports = {
   },
   register: {
     post: (req, res, next) => {
-      console.log("3 req.body");
       passport.authenticate("register", (err, user, info) => {
-        console.log("4 req.body");
-
         if (err) {
           res.status(201).send("ERROR /users/signin : ", err);
         }
 
         if (info !== undefined) {
-          console.log("5 req.body");
-
           res.status(201).send({
             success: false,
-            message: info.message + "111"
+            message: info.message
           });
         } else {
-          console.log("6 req.body");
           req.logIn(user, err => {
             res.status(201).send({
               success: true
