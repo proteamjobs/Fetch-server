@@ -59,14 +59,14 @@ passport.use(
               return done(null, false, { message: "This user is already!" });
             } else {
               bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
-                if (req.body.google_id !== undefined) {
+                if (req.body.provider === "google") {
                   db.users
                     .create({
                       email: email,
                       password: hashedPassword,
                       name: req.body.name,
                       provider: req.body.provider,
-                      google_id: req.body.google_id,
+                      google_id: req.body.socialId,
                       imageURL: req.body.imageURL
                     })
                     .then(user => {
