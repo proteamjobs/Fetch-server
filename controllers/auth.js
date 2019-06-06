@@ -20,6 +20,7 @@ module.exports = {
           (err, email, info) => {
             if (email.hasOwnProperty("displayName")) {
               let userData = {
+                success: false,
                 isUser: false,
                 message: "Don't have user!",
                 google_id: email.id,
@@ -40,6 +41,7 @@ module.exports = {
                 jwtSecret.secret
               );
               res.status(200).send({
+                success: true,
                 isUser: true,
                 token: token,
                 userDB_id: email._id,
