@@ -59,8 +59,9 @@ passport.use(
               return done(null, false, { message: "This user is already!" });
             } else {
               bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
+                console.log("1 req.body :: ", req.body);
                 if (req.body.provider === "google") {
-                  console.log(req.body);
+                  console.log("2 req.body :: ", req.body);
                   db.users
                     .create({
                       email: email,
