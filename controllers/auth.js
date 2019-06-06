@@ -13,6 +13,7 @@ module.exports = {
     },
     callback: {
       get: (req, res, next) => {
+        console.log("/auth/google/callback!!!!!!!!!!!!!!!!!!!!!!!");
         passport.authenticate(
           "google",
           {
@@ -43,12 +44,7 @@ module.exports = {
                 isUser: true,
                 token: token
               });
-
-              // res
-              //   .status(200)
-              //   .send({ success: false, message: "Already user!" });
             }
-            console.log("/google/callback");
           }
         )(req, res, next);
       }
