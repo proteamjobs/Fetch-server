@@ -31,6 +31,7 @@ module.exports = {
 
               res.status(200).send(userData);
             } else {
+              console.log("Auth emails :::: ", email);
               const token = jwt.sign(
                 {
                   email: email.emails[0].value,
