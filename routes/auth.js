@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const controllers = require("../controllers");
-const passport = require("passport");
+// const passport = require("passport");
 
 // TODO 제거 예정
 // router.get("/", function(req, res, next) {

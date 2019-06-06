@@ -21,6 +21,7 @@ let db = require("./models/index.js");
 
 db.sequelize
   .sync()
+  // .sync({ alter: true })
   // .sync({ force: true })
   .then(() => {
     console.log(" DB Connect!");

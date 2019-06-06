@@ -1,6 +1,6 @@
 const passport = require("passport");
-// const jwt = require("jsonwebtoken");
-// const jwtSecret = require("../config/jwtConfig");
+const jwt = require("jsonwebtoken");
+const jwtSecret = require("../config/jwtConfig");
 // const db = require("../models");
 
 module.exports = {
@@ -20,22 +20,33 @@ module.exports = {
           },
           (err, email, info) => {
             if (email) {
-              // console.log(email);
               let userData = {
-                success: true,
+                isUser: false,
                 message: "Don't have user!",
-                google_id: parseInt(email.id),
+                google_id: email.id,
                 email: email.emails[0].value,
                 name: email.displayName,
                 provider: email.provider,
-                imageURL: email.photos[0].value
+                image: email.photos[0].value
               };
-              // console.log("userData :: ", userData);
               res.status(200).send(userData);
             } else {
-              res
-                .status(200)
-                .send({ success: false, message: "Already user!" });
+              const token = jwt.sign(
+                {
+                  email: email.emails[0].value,
+                  name: email.displayName,
+                  image: email.photos[0].value
+                },
+                jwtSecret.secret
+              );
+              res.status(200).send({
+                isUser: true,
+                token: token
+              });
+
+              // res
+              //   .status(200)
+              //   .send({ success: false, message: "Already user!" });
             }
             console.log("/google/callback");
           }
