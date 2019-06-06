@@ -30,7 +30,7 @@ passport.use(
             return done(null, email);
           } else {
             console.log("We have user!");
-            return done(null, false);
+            return done(null, user);
           }
         });
     }
