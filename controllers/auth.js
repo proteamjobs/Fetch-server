@@ -1,7 +1,6 @@
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const jwtSecret = require("../config/jwtConfig");
-// const db = require("../models");
 
 module.exports = {
   google: {
@@ -13,7 +12,6 @@ module.exports = {
     },
     callback: {
       get: (req, res, next) => {
-        console.log("/auth/google/callback!!!!!!!!!!!!!!!!!!!!!!!");
         passport.authenticate(
           "google",
           {
