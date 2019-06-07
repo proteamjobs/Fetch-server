@@ -1,12 +1,18 @@
 Arguments: 
 <<<<<<< HEAD
+<<<<<<< HEAD
   /usr/local/bin/node /usr/local/bin/yarn install
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   /usr/local/bin/node /usr/local/bin/yarn add express-fileupload
 =======
   /usr/local/bin/node /usr/local/bin/yarn add sequelize-auto-migrations
 >>>>>>> c398159dae4218297c8233aa1752683e077125bd
+<<<<<<< HEAD
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
+=======
 >>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
 
 PATH: 
@@ -23,13 +29,19 @@ Platform:
 
 Trace: 
 <<<<<<< HEAD
+<<<<<<< HEAD
   Error: EACCES: permission denied, mkdir '/Users/a1/Documents/4_project/fetch-server/node_modules/jsonwebtoken/node_modules/ms'
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   Error: EACCES: permission denied, unlink '/Users/a1/Documents/4_project/fetch-server/node_modules/append-field/.npmignore'
 =======
   Error: EACCES: permission denied, unlink '/Users/yh/workspace/codestates/02_Project/Fetch/fetch-server/node_modules/.yarn-integrity'
 >>>>>>> c398159dae4218297c8233aa1752683e077125bd
+<<<<<<< HEAD
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
+=======
 >>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
 
 npm manifest: 
@@ -3635,6 +3647,7 @@ Lockfile:
       mime-types "~2.1.24"
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   typical@^4.0.0:
     version "4.0.0"
     resolved "https://registry.yarnpkg.com/typical/-/typical-4.0.0.tgz#cbeaff3b9d7ae1e2bbfaf5a4e6f11eccfde94fc4"
@@ -3642,10 +3655,15 @@ Lockfile:
   
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   typedarray@^0.0.6:
     version "0.0.6"
     resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
     integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+=======
+<<<<<<< HEAD
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
 =======
 >>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   uid2@0.0.x:
@@ -3859,6 +3877,7 @@ Lockfile:
     integrity sha1-SWsswQnsqNus/i3HK2A8F8WHCtQ=
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   xmlhttprequest-ssl@~1.5.4:
     version "1.5.5"
     resolved "https://registry.yarnpkg.com/xmlhttprequest-ssl/-/xmlhttprequest-ssl-1.5.5.tgz#c2876b06168aadc40e57d97e81191ac8f4398b3e"
@@ -3866,10 +3885,15 @@ Lockfile:
   
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   xtend@^4.0.0:
     version "4.0.1"
     resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
     integrity sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
+=======
+<<<<<<< HEAD
+>>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
 =======
 >>>>>>> ea4e2e872608c6a1daf0430381cbbac42c0bd917
   "y18n@^3.2.1 || ^4.0.0":
