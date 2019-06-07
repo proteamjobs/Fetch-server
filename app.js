@@ -5,6 +5,27 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const passport = require("passport");
+const multer = require("multer");
+const AWS = require("aws-sdk");
+const multerS3 = require("multer-s3");
+const key = require("./config/config.json");
+const key1 = key.S3_ACCESS_KET_ID;
+const key2 = key.S3_SECRET_ACCESS_KEY;
+
+AWS.config.update({
+  accessKeyId: key1,
+  secretAccessKey: key2
+});
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: "fetcher.fun",
+    key(req, file, cb) {
+      cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
+    }
+  }),
+  limits: { fileSize: 5 * 1024 * 1025 }
+});
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -16,6 +37,8 @@ const noticeRouter = require("./routes/notice");
 const parcelsRouter = require("./routes/parcels");
 const notificationsRouter = require("./routes/notifications");
 const authRouter = require("./routes/auth");
+
+// const fileUpload = require("express-fileupload");
 
 let db = require("./models/index.js");
 
@@ -44,6 +67,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 
+app.post("/orders/create", upload.single("img"), (req, res, next) => {
+  console.log("file ::: ", req.file);
+  console.log("body ::: ", req.body);
+  res.send("OK");
+});
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/orders", ordersRouter);

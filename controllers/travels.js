@@ -1,4 +1,5 @@
 const db = require("../models");
+const passport = require("passport");
 
 module.exports = {
   list: {
@@ -19,14 +20,15 @@ module.exports = {
         });
 
         for (let i = 0; i < travel.travelList.length; i++) {
-          let name = await db.users.findOne({
+          let user = await db.users.findOne({
             where: {
               _id: travel.travelList[i].traveler_id
             },
-            attributes: ["name"]
+            attributes: ["name", "image"]
           });
-          // console.log(name.dataValues.name);
-          travel.travelList[i].travelerName = name.dataValues.name;
+          // console.log(user.dataValues);
+          travel.travelList[i].travelerName = user.dataValues.name;
+          travel.travelList[i].travelerImageUrl = user.dataValues.image;
         }
 
         travel.travelList.reverse();
@@ -45,13 +47,58 @@ module.exports = {
     }
   },
   detail: {
-    get: (req, res) => {
-      res.status(201).send("GET /travels/detail OK!");
+    get: async (req, res) => {
+      try {
+        let travelDetail = {};
+        let list = await db.travels.findOne({
+          where: {
+            _id: req.query.travel_id
+          }
+        });
+        let user = await db.users.findOne({
+          where: {
+            _id: list.traveler_id
+          },
+          attributes: ["name", "image"]
+        });
+
+        travelDetail.travelerName = user.dataValues.name;
+        travelDetail.travelerImageUrl = user.dataValues.image;
+        travelDetail.destination = list.dataValues.destination;
+        travelDetail.description = list.dataValues.description;
+        travelDetail.arrivingDate = list.dataValues.arrivalDate;
+        travelDetail.departingDate = list.dataValues.departureDate;
+
+        res.status(200).send(travelDetail);
+      } catch (err) {
+        console.log("ERROR ::: ", err);
+        res.status(400).send(err);
+      }
+      // res.status(201).send("GET /travels/detail OK!");
     }
   },
   create: {
     post: (req, res) => {
-      res.status(201).send("POST /travels/create OK!");
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        // console.log(user);
+        // console.log(req.body);
+        db.travels
+          .create({
+            destination: req.body.destination,
+            departureDate: req.body.departingDate,
+            arrivalDate: req.body.arrivingDate,
+            description: req.body.description,
+            traveler_id: user.dataValues._id
+          })
+          .then(() => {
+            res.status(201).send("POST /travels/create OK!");
+          })
+          .catch(err => {
+            res.status(400).send(err);
+            console.log("ERROR ::: ", err);
+          });
+      })(req, res);
+      // console.log(req.headers.authorization);
     }
   }
 };
