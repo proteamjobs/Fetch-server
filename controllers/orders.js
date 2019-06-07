@@ -1,6 +1,29 @@
 const db = require("../models");
+// const multer = require("multer");
 // const fs = require("fs");
 // const path = require("path");
+// const AWS = require("aws-sdk");
+// const multerS3 = require("multer-s3");
+// const key = require("../config/config.json");
+// const key1 = key.S3_ACCESS_KET_ID;
+// const key2 = key.S3_SECRET_ACCESS_KEY;
+
+// AWS.config.update({
+//   accessKeyId: key1,
+//   secretAccessKey: key2
+// });
+// const upload = multer({
+//   storage: multerS3({
+//     s3: new AWS.S3(),
+//     bucket: "fetcher.fun",
+//     key(req, file, cb) {
+//       cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
+//     }
+//   }),
+//   limits: { fileSize: 5 * 1024 * 1025 }
+// });
+
+// const upload = multer({ dest: "uploads/" });
 
 module.exports = {
   list: {
@@ -98,25 +121,33 @@ module.exports = {
   create: {
     post: (req, res) => {
       let temp = req.body;
-      db.orders
-        .create({
-          name: temp.productName,
-          destination: temp.destination,
-          price: temp.price,
-          due: temp.due,
-          quantity: temp.quantity,
-          preferParcel: temp.preferParcel,
-          description: temp.description,
-          buyer_id: 3
-        })
-        .then(() => {
-          res.status(201).send("POST /orders/create OK!");
-        })
-        .catch(err => {
-          res.status(400).send(err);
-          console.log(err);
-        });
+      console.log(temp);
+
+      // db.orders
+      //   .create({
+      //     name: temp.productName,
+      //     destination: temp.destination,
+      //     price: temp.price,
+      //     due: temp.due,
+      //     quantity: temp.quantity,
+      //     preferParcel: temp.preferParcel,
+      //     description: temp.description,
+      //     buyer_id: 3
+      //   })
+      //   .then(() => {
+      //     res.status(201).send("POST /orders/create OK!");
+      //   })
+      //   .catch(err => {
+      //     res.status(400).send(err);
+      //     console.log(err);
+      //   });
+      res.status(201).send("POST /orders/create OK!");
     }
+    // post: (upload.single("img"),
+    // (req, res, next) => {
+    //   console.log(req.file);
+    //   res.status(201).send("POST /orders/create OK!");
+    // })
   },
   addapplier: {
     post: (req, res) => {
