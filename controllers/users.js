@@ -80,7 +80,9 @@ module.exports = {
                 );
                 res.status(201).send({
                   success: true,
-                  token: token
+                  token: token,
+                  userDB_id: user._id,
+                  userDB_name: user.name
                 });
               });
           });

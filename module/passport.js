@@ -2,10 +2,40 @@ const BCRIPT_SALT_ROUNDS = 12;
 const jwtSecret = require("../config/jwtConfig");
 const db = require("../models");
 const bcrypt = require("bcrypt");
+const GOOGLE_KEY = require("../config/config").google.web;
 const passport = require("passport"),
   localStrategy = require("passport-local").Strategy,
   JWTstrategy = require("passport-jwt").Strategy,
-  ExtractJWT = require("passport-jwt").ExtractJwt;
+  ExtractJWT = require("passport-jwt").ExtractJwt,
+  GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: GOOGLE_KEY.client_id,
+      clientSecret: GOOGLE_KEY.client_secret,
+      callbackURL: GOOGLE_KEY.redirect_uris[1],
+      passReqToCallback: true
+    },
+    (req, ccessToken, refreshToken, profile, email, done) => {
+      db.users
+        .findOne({
+          where: {
+            google_id: email.id
+          }
+        })
+        .then(user => {
+          if (!user) {
+            console.log("Don't have user!");
+            return done(null, email);
+          } else {
+            console.log("We have user!");
+            return done(null, user);
+          }
+        });
+    }
+  )
+);
 
 passport.use(
   "register",
@@ -28,18 +58,39 @@ passport.use(
             if (user !== null) {
               return done(null, false, { message: "This user is already!" });
             } else {
-              bcrypt.hash(password, BCRIPT_SALT_ROUNDS).then(hashedPassword => {
-                db.users
-                  .create({
-                    email: email,
-                    password: hashedPassword,
-                    name: req.body.name,
-                    provider: "fetcher"
-                  })
-                  .then(user => {
-                    return done(null, user);
+              if (password === "social login") {
+                console.log("SOCIAL REGISTER !!!");
+                if (req.body.provider === "google") {
+                  console.log("GOOGLE !!!");
+                  db.users
+                    .create({
+                      email: email,
+                      name: req.body.name,
+                      provider: req.body.provider,
+                      google_id: req.body.socialId,
+                      image: req.body.imageURL
+                    })
+                    .then(user => {
+                      return done(null, user);
+                    });
+                }
+              } else {
+                console.log("LOCAL REGISTER !!!");
+                bcrypt
+                  .hash(password, BCRIPT_SALT_ROUNDS)
+                  .then(hashedPassword => {
+                    db.users
+                      .create({
+                        email: email,
+                        password: hashedPassword,
+                        name: req.body.name,
+                        provider: "fetcher"
+                      })
+                      .then(user => {
+                        return done(null, user);
+                      });
                   });
-              });
+              }
             }
           });
       } catch (err) {
