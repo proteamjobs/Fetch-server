@@ -68,7 +68,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 
 app.post("/orders/create", upload.single("img"), (req, res, next) => {
-  // console.log("file ::: ", req.file.location);
+  console.log("file ::: ", req.file);
   console.log("body ::: ", req.body);
   res.send("OK");
 });
