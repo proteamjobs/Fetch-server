@@ -143,11 +143,12 @@ module.exports = {
       //   });
       res.status(201).send("POST /orders/create OK!");
     }
-    // post: (upload.single("img"),
-    // (req, res, next) => {
-    //   console.log(req.file);
+    // post: (req, res, next) => {
+    //   upload.single("img")(req, res, next);
+    //   // setTimeout(() => console.log(req.file), 5000);
+
     //   res.status(201).send("POST /orders/create OK!");
-    // })
+    // }
   },
   addapplier: {
     post: (req, res) => {
