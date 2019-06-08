@@ -67,11 +67,47 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 
-app.post("/orders/create", upload.single("img"), (req, res, next) => {
-  console.log("file ::: ", req.file);
-  console.log("body ::: ", req.body);
-  res.send("OK");
+app.post("/orders/create", upload.single("uploadedImage"), (req, res, next) => {
+  // console.log("file ::: ", req.file);
+  // console.log("body ::: ", req.body);
+  console.log(req.headers);
+
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    let temp = req.body;
+    console.log("user ::: ", user);
+    console.log(temp);
+    db.orders
+      .create({
+        name: temp.productName,
+        destination: temp.destination,
+        price: temp.price,
+        due: temp.due,
+        quantity: temp.quantity,
+        preferParcel: temp.preferParcel,
+        description: temp.description,
+        referenceUrl: temp.referenceUrl,
+        buyer_id: user.dataValues._id
+      })
+      .then(result => {
+        db.productimgs.create({
+          order_id: result.dataValues._id,
+          imgUrl: req.file.location
+        });
+        let response = {
+          success: true
+        };
+        res.status(201).send(JSON.stringify(response));
+      })
+      .catch(err => {
+        let response = {
+          success: false,
+          error: err
+        };
+        res.status(400).send(JSON.stringify(response));
+      });
+  })(req, res, next);
 });
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/orders", ordersRouter);
