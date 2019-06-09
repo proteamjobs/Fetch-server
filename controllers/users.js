@@ -152,6 +152,13 @@ module.exports = {
         });
     }
   },
+  signout: {
+    get: (req, res) => {
+      console.log("!!");
+      req.logout();
+      res.status(200).send({ success: true });
+    }
+  },
   changeprofile: {
     update: (req, res) => {
       res.status(201).send("UPDATE users/changeprofile OK!");
