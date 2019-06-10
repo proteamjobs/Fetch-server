@@ -82,7 +82,8 @@ module.exports = {
                   success: true,
                   token: token,
                   userDB_id: user._id,
-                  userDB_name: user.name
+                  userDB_name: user.name,
+                  userDB_image: user.image
                 });
               });
           });
