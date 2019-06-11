@@ -40,12 +40,15 @@ module.exports = {
                 },
                 jwtSecret.secret
               );
+
               res.status(200).send({
                 success: true,
                 isUser: true,
                 token: token,
                 userDB_id: email._id,
-                userDB_name: email.name
+                userDB_name: email.name,
+                userDB_image: email.photos[0].value,
+                userDB_provider: email.provider
               });
             }
           }
