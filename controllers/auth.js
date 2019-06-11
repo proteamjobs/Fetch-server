@@ -41,13 +41,15 @@ module.exports = {
                 jwtSecret.secret
               );
 
+              console.log(email);
+
               res.status(200).send({
                 success: true,
                 isUser: true,
                 token: token,
                 userDB_id: email._id,
                 userDB_name: email.name,
-                userDB_image: email.photos[0].value,
+                userDB_image: email.image,
                 userDB_provider: email.provider
               });
             }
