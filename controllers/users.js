@@ -83,7 +83,8 @@ module.exports = {
                   token: token,
                   userDB_id: user._id,
                   userDB_name: user.name,
-                  userDB_image: user.image
+                  userDB_image: user.image,
+                  userDB_provider: user.provider
                 });
               });
           });
@@ -155,7 +156,6 @@ module.exports = {
   },
   signout: {
     get: (req, res) => {
-      console.log("!!");
       req.logout();
       res.status(200).send({ success: true });
     }
