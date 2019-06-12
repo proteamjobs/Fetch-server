@@ -84,7 +84,9 @@ passport.use(
                         email: email,
                         password: hashedPassword,
                         name: req.body.name,
-                        provider: "fetcher"
+                        provider: "fetcher",
+                        image:
+                          "https://s3.ap-northeast-2.amazonaws.com/fetcher.fun/default/defaultProfile.png"
                       })
                       .then(user => {
                         return done(null, user);

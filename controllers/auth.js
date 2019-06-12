@@ -40,9 +40,6 @@ module.exports = {
                 },
                 jwtSecret.secret
               );
-
-              console.log(email);
-
               res.status(200).send({
                 success: true,
                 isUser: true,
