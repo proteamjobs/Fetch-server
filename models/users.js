@@ -79,6 +79,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "traveler_id",
       sourceKey: "_id"
     });
+    users.hasMany(models.firebase, {
+      foreignKey: "user_id",
+      sourceKey: "_id"
+    });
   };
 
   return users;
