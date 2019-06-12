@@ -59,9 +59,10 @@ module.exports = {
           where: {
             _id: list.traveler_id
           },
-          attributes: ["name", "image"]
+          attributes: ["_id", "name", "image"]
         });
 
+        travelDetail.traveler_id = user.dataValues._id;
         travelDetail.travelerName = user.dataValues.name;
         travelDetail.travelerImageUrl = user.dataValues.image;
         travelDetail.destination = list.dataValues.destination;
