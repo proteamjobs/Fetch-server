@@ -62,11 +62,13 @@ module.exports = (sequelize, DataTypes) => {
   orders.associate = function(models) {
     orders.belongsTo(models.users, {
       foreignKey: "buyer_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
     orders.belongsTo(models.parcels, {
       foreignKey: "parcel_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
     orders.hasMany(models.reviews, {
       foreignKey: "order_id",
