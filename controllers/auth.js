@@ -6,6 +6,7 @@ module.exports = {
   google: {
     get: (req, res, next) => {
       passport.authenticate("google", {
+        authType: "rerequest",
         scope: ["profile", "email"],
         session: false
       })(req, res, next);
@@ -20,7 +21,7 @@ module.exports = {
           (err, email, info) => {
             if (email.hasOwnProperty("displayName")) {
               let userData = {
-                success: false,
+                success: true,
                 isUser: false,
                 message: "Don't have user!",
                 google_id: email.id,

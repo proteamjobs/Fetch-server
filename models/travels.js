@@ -37,7 +37,8 @@ module.exports = (sequelize, DataTypes) => {
   travels.associate = function(models) {
     travels.belongsTo(models.users, {
       foreignKey: "traveler_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
   };
 
