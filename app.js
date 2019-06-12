@@ -80,6 +80,9 @@ app.get("/test", function(req, res) {
       title: "server test",
       body: "node에서 push test"
     },
+    data: {
+      test: "test"
+    },
     token: token
   };
 
