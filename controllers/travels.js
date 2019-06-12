@@ -59,9 +59,10 @@ module.exports = {
           where: {
             _id: list.traveler_id
           },
-          attributes: ["name", "image"]
+          attributes: ["_id", "name", "image"]
         });
 
+        travelDetail.traveler_id = user.dataValues._id;
         travelDetail.travelerName = user.dataValues.name;
         travelDetail.travelerImageUrl = user.dataValues.image;
         travelDetail.destination = list.dataValues.destination;
@@ -91,11 +92,18 @@ module.exports = {
             traveler_id: user.dataValues._id
           })
           .then(() => {
-            res.status(201).send("POST /travels/create OK!");
+            let response = {
+              success: true
+            };
+            res.status(201).send(response);
           })
           .catch(err => {
-            res.status(400).send(err);
             console.log("ERROR ::: ", err);
+            let response = {
+              success: false,
+              error: err
+            };
+            res.status(400).send(response);
           });
       })(req, res);
       // console.log(req.headers.authorization);
