@@ -74,8 +74,6 @@ app.post("/orders/create", upload.single("uploadedImage"), (req, res, next) => {
 
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
     let temp = req.body;
-    console.log("user ::: ", user);
-    console.log(temp);
     db.orders
       .create({
         name: temp.productName,
