@@ -7,6 +7,7 @@ const notice = require("./notice");
 const notifications = require("./notifications");
 const parcels = require("./parcels");
 const auth = require("./auth");
+const firebase = require("./firebase");
 
 module.exports = {
   auth,
@@ -17,5 +18,6 @@ module.exports = {
   reviews,
   notice,
   parcels,
-  notifications
+  notifications,
+  firebase
 };
