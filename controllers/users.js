@@ -269,8 +269,19 @@ module.exports = {
     }
   },
   applylist: {
-    get: (req, res) => {
-      res.status(201).send("GET users/applylist OK!");
+    get: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          res.status(201).send(err);
+        }
+        if (info !== undefined) {
+          res.status(201).send(info.message);
+        } else {
+          res.status(201).send(user);
+        }
+      })(req, res, next);
+
+      // res.status(201).send("GET users/applylist OK!");
     }
   }
 };
