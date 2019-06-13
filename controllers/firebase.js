@@ -34,7 +34,7 @@ module.exports = {
         let response = {
           success: false
         };
-        res.status(400).send(response);
+        res.status(201).send(response);
       }
     }
   }
