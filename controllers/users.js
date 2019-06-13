@@ -171,8 +171,101 @@ module.exports = {
     }
   },
   orderlist: {
-    get: (req, res) => {
-      res.status(201).send("GET users/orderlist OK!");
+    get: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          res.status(201).send(err);
+        }
+        if (info !== undefined) {
+          res.status(201).send(info.message);
+        } else {
+          db.orders
+            .findAll({
+              where: {
+                buyer_id: user._id
+              }
+            })
+            .then(async orderList => {
+              let responseData = {
+                orderlist: []
+              };
+
+              let tempListData = orderList.map(async item => {
+                let image = await db.productimgs.findAll({
+                  where: {
+                    order_id: item._id
+                  }
+                });
+
+                let fetcher = await db.applies.findOne({
+                  where: {
+                    order_id: item._id,
+                    isPicked: true
+                  },
+                  attributes: ["traveler_id"]
+                });
+
+                let fetcher_id = 0;
+                if (fetcher !== null) {
+                  fetcher_id = fetcher.dataValues.traveler_id;
+                }
+
+                // TODO Add parcelStatus
+                let insertItem = {
+                  order_id: item._id,
+                  productName: item.name,
+                  destination: item.destination,
+                  price: item.price,
+                  due: item.due,
+                  status: item.status,
+                  imgUrl: image[0].dataValues.imgUrl,
+                  fetcher_id: fetcher_id
+                };
+
+                return insertItem;
+
+                //   {
+                //     "_id": 33, -> order_id
+                //     "name": "테스트", -> productName
+                //     "destination": "일본", -> destination
+                //     "price": 3000, -> price
+                //     "due": "2019. 9. 14", -> due
+                //     "quantity": 1,
+                //     "preferParcel": false,
+                //     "description": "테스트입니다",
+                //     "referenceUrl": null,
+                //     "buyer_id": 78,
+                //     "status": 0,
+                //     "parcel_id": null,
+                // }
+
+                // {
+                //   orderlist: [ {
+                //     order_id: Number, @@
+                //     productName: String, @@
+                //     destination: String, @@
+                //     price: Number, @@
+                //     due: String, @@
+                //     status: String, @@
+                //     imageUrl: String,  @@     ## order_id -> image table
+                //     fetcher_id: Number,     ## applies table -> isPicked true
+                //     parcelStatus: Boolean    ## parcer_id
+                //   } ]
+                // }
+              });
+
+              await Promise.all(tempListData).then(list => {
+                list.map(data => {
+                  responseData.orderlist.push(data);
+                });
+              });
+              res.status(201).send(responseData);
+            })
+            .catch(err => {
+              res.status(201).send(err);
+            });
+        }
+      })(req, res, next);
     }
   },
   applylist: {
