@@ -163,6 +163,7 @@ module.exports = {
             error: info
           });
         } else {
+          // applies 테이블에 중복된 데이터가 있는지 확인하고 삽입한다.
           db.applies
             .findOrCreate({
               where: {
@@ -175,8 +176,10 @@ module.exports = {
             })
             .then(([applies, created]) => {
               if (created) {
+                // 기존에 데이터가 없는 것을 확인 후 상태를 response 한다.
                 res.status(201).send({ success: true });
               } else {
+                // 기존에 데이터가 있는 것을 확인 후 에러와 함께 response 한다.
                 res
                   .status(201)
                   .send({ success: false, error: "Already applies." });
@@ -201,6 +204,7 @@ module.exports = {
             error: info.message
           });
         } else {
+          // 먼저 실제로 applies 테이블에 데이터가 있는지 조회한다.
           db.applies
             .findOne({
               where: {
@@ -210,29 +214,37 @@ module.exports = {
             })
             .then(applies => {
               if (applies) {
-                db.applies
-                  .update(
-                    { isPicked: true },
-                    {
-                      where: {
-                        traveler_id: req.body.traveler_id,
-                        order_id: req.body.order_id
+                // 만일 해당 row의 isPicked가 false 이면 업데이트 후 상태를 response 한다.
+                if (!applies.dataValues.isPicked) {
+                  db.applies
+                    .update(
+                      { isPicked: true },
+                      {
+                        where: {
+                          traveler_id: req.body.traveler_id,
+                          order_id: req.body.order_id
+                        }
                       }
-                    }
-                  )
-                  .then(() => {
-                    res.status(201).send({ success: true });
-                  })
-                  .catch(err => {
-                    res.status(201).send({ success: false, error: err });
-                  });
-              } else {
-                res
-                  .status(201)
-                  .send({
+                    )
+                    .then(() => {
+                      res.status(201).send({ success: true });
+                    })
+                    .catch(err => {
+                      res.status(201).send({ success: false, error: err });
+                    });
+                } else {
+                  // applies 테이블에 존재하지 않을 겅우 에러와 함께 response 한다.
+                  res.status(201).send({
                     success: false,
                     error: "ERROR :: Don't have applies!"
                   });
+                }
+              } else {
+                // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
+                res.status(201).send({
+                  success: false,
+                  error: "ERROR :: Already isPicked is True!"
+                });
               }
             });
         }
