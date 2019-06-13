@@ -42,6 +42,7 @@ module.exports = {
 
             // console.log(temp);
             response.notiList.push(temp);
+            response.success = true;
           }
           console.log(response);
           res.status(200).send(response);
