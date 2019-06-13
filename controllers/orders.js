@@ -1,4 +1,5 @@
 const db = require("../models");
+const passport = require("passport");
 // const multer = require("multer");
 // const fs = require("fs");
 // const path = require("path");
@@ -151,8 +152,41 @@ module.exports = {
     // }
   },
   addapplier: {
-    post: (req, res) => {
-      res.status(201).send("POST /orders/addapplier OK!");
+    post: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          res.status(201).send({ success: false, error: err });
+        }
+        if (info !== undefined) {
+          res.status(201).send({
+            success: false,
+            error: info
+          });
+        } else {
+          db.applies
+            .findOrCreate({
+              where: {
+                traveler_id: user._id,
+                order_id: req.body.order_id
+              },
+              defaults: {
+                isPicked: false
+              }
+            })
+            .then(([applies, created]) => {
+              if (created) {
+                res.status(201).send({ success: true });
+              } else {
+                res
+                  .status(201)
+                  .send({ success: false, error: "Already applies." });
+              }
+            })
+            .catch(err => {
+              res.status(201).send({ success: false, error: err });
+            });
+        }
+      })(req, res, next);
     }
   },
   pickfetcher: {

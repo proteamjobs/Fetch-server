@@ -96,7 +96,7 @@ module.exports = {
     delete: (req, res, next) => {
       passport.authenticate("jwt", { session: false }, (err, user, info) => {
         if (err) {
-          console.log("ERROR /users/info : ", err);
+          console.log("ERROR /users/deleteaccount : ", err);
         }
         if (info !== undefined) {
           res.status(201).send({
