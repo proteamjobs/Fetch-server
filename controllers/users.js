@@ -237,7 +237,6 @@ module.exports = {
                 //     "buyer_id": 78,
                 //     "status": 0,
                 //     "parcel_id": null,
-                //      dddd
                 // }
 
                 // {
