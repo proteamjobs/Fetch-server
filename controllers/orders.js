@@ -190,8 +190,53 @@ module.exports = {
     }
   },
   pickfetcher: {
-    post: (req, res) => {
-      res.status(201).send("POST /orders/pickfetcher OK!");
+    post: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          res.status(201).send(err);
+        }
+        if (info !== undefined) {
+          res.status(201).send({
+            success: false,
+            error: info.message
+          });
+        } else {
+          db.applies
+            .findOne({
+              where: {
+                traveler_id: req.body.traveler_id,
+                order_id: req.body.order_id
+              }
+            })
+            .then(applies => {
+              if (applies) {
+                db.applies
+                  .update(
+                    { isPicked: true },
+                    {
+                      where: {
+                        traveler_id: req.body.traveler_id,
+                        order_id: req.body.order_id
+                      }
+                    }
+                  )
+                  .then(() => {
+                    res.status(201).send({ success: true });
+                  })
+                  .catch(err => {
+                    res.status(201).send({ success: false, error: err });
+                  });
+              } else {
+                res
+                  .status(201)
+                  .send({
+                    success: false,
+                    error: "ERROR :: Don't have applies!"
+                  });
+              }
+            });
+        }
+      })(req, res, next);
     }
   }
 };
