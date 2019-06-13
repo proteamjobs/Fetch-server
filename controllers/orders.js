@@ -233,17 +233,17 @@ module.exports = {
                       res.status(201).send({ success: false, error: err });
                     });
                 } else {
-                  // applies 테이블에 존재하지 않을 겅우 에러와 함께 response 한다.
+                  // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
                   res.status(201).send({
                     success: false,
-                    error: "ERROR :: Don't have applies!"
+                    error: "ERROR :: Already isPicked is True!"
                   });
                 }
               } else {
-                // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
+                // applies 테이블에 존재하지 않을 겅우 에러와 함께 response 한다.
                 res.status(201).send({
                   success: false,
-                  error: "ERROR :: Already isPicked is True!"
+                  error: "ERROR :: Don't have applies!"
                 });
               }
             });
