@@ -179,6 +179,7 @@ module.exports = {
         if (info !== undefined) {
           res.status(201).send(info.message);
         } else {
+          // 로그인 된 계정이 등록했던 주문 내역을 조회한다.
           db.orders
             .findAll({
               where: {
@@ -191,12 +192,14 @@ module.exports = {
               };
 
               let tempListData = orderList.map(async item => {
+                // order_id에 대한 이미지를 받아온다.
                 let image = await db.productimgs.findAll({
                   where: {
                     order_id: item._id
                   }
                 });
 
+                // order_id에 대해 주문자로 부터 선택 받은 유저의 정보를 받아온다.
                 let fetcher = await db.applies.findOne({
                   where: {
                     order_id: item._id,
@@ -205,6 +208,7 @@ module.exports = {
                   attributes: ["traveler_id"]
                 });
 
+                // 아직 선택받지 못한 주문의 fetcher_id는 0으로 지정한다.
                 let fetcher_id = 0;
                 if (fetcher !== null) {
                   fetcher_id = fetcher.dataValues.traveler_id;
@@ -218,46 +222,16 @@ module.exports = {
                   price: item.price,
                   due: item.due,
                   status: item.status,
-                  imgUrl: image[0].dataValues.imgUrl,
+                  imageUrl: image[0].dataValues.imgUrl,
                   fetcher_id: fetcher_id
                 };
 
                 return insertItem;
-
-                //   {
-                //     "_id": 33, -> order_id
-                //     "name": "테스트", -> productName
-                //     "destination": "일본", -> destination
-                //     "price": 3000, -> price
-                //     "due": "2019. 9. 14", -> due
-                //     "quantity": 1,
-                //     "preferParcel": false,
-                //     "description": "테스트입니다",
-                //     "referenceUrl": null,
-                //     "buyer_id": 78,
-                //     "status": 0,
-                //     "parcel_id": null,
-                // }
-
-                // {
-                //   orderlist: [ {
-                //     order_id: Number, @@
-                //     productName: String, @@
-                //     destination: String, @@
-                //     price: Number, @@
-                //     due: String, @@
-                //     status: String, @@
-                //     imageUrl: String,  @@     ## order_id -> image table
-                //     fetcher_id: Number,     ## applies table -> isPicked true
-                //     parcelStatus: Boolean    ## parcer_id
-                //   } ]
-                // }
               });
 
+              // 반환된 promise 데이터를 풀어내면서 responseData에 push한다.
               await Promise.all(tempListData).then(list => {
-                list.map(data => {
-                  responseData.orderlist.push(data);
-                });
+                responseData.orderlist.push(list);
               });
               res.status(201).send(responseData);
             })
@@ -270,18 +244,131 @@ module.exports = {
   },
   applylist: {
     get: (req, res, next) => {
-      passport.authenticate("jwt", { session: false }, (err, user, info) => {
-        if (err) {
-          res.status(201).send(err);
-        }
-        if (info !== undefined) {
-          res.status(201).send(info.message);
-        } else {
-          res.status(201).send(user);
-        }
-      })(req, res, next);
+      passport.authenticate(
+        "jwt",
+        { session: false },
+        async (err, user, info) => {
+          if (err) {
+            res.status(201).send(err);
+          }
+          if (info !== undefined) {
+            res.status(201).send(info.message);
+          } else {
+            // 로그인 된 계정이 지원했었던 order_id를 배열로 받아온다.
+            let orderList = await db.applies
+              .findAll({
+                where: {
+                  traveler_id: user._id
+                },
+                attributes: ["order_id"]
+              })
+              .then(item => {
+                let tempArray = item.map(data => {
+                  return data.dataValues.order_id;
+                });
+                return tempArray;
+              });
 
-      // res.status(201).send("GET users/applylist OK!");
+            let responseData = {
+              applylist: []
+            };
+
+            // TODO Add parcelStatus
+            let getList = orderList.map(async data => {
+              return await db.orders
+                .findOne({
+                  where: {
+                    _id: data
+                  }
+                })
+                .then(async list => {
+                  // order_id에 대한 이미지를 받아온다.
+                  let image = await db.productimgs.findAll({
+                    where: {
+                      order_id: list._id
+                    }
+                  });
+
+                  let returnData = {
+                    order_id: list._id,
+                    productName: list.name,
+                    destination: list.destination,
+                    price: list.price,
+                    due: list.due,
+                    status: list.status,
+                    imageUrl: image[0].dataValues.imgUrl
+                  };
+
+                  return returnData;
+                });
+            });
+
+            // 반환된 promise 데이터를 풀어내면서 responseData에 push한다.
+            await Promise.all(getList).then(list => {
+              responseData.applylist.push(list);
+            });
+            res.status(201).send(responseData);
+          }
+        }
+      )(req, res, next);
     }
   }
 };
+
+// ------------- /users/orderlist -----------
+//   {
+//     "_id": 33, -> order_id
+//     "name": "테스트", -> productName
+//     "destination": "일본", -> destination
+//     "price": 3000, -> price
+//     "due": "2019. 9. 14", -> due
+//     "quantity": 1,
+//     "preferParcel": false,
+//     "description": "테스트입니다",
+//     "referenceUrl": null,
+//     "buyer_id": 78,
+//     "status": 0,
+//     "parcel_id": null,
+// }
+
+// {
+//   orderlist: [ {
+//     order_id: Number, @@
+//     productName: String, @@
+//     destination: String, @@
+//     price: Number, @@
+//     due: String, @@
+//     status: String, @@
+//     imageUrl: String,  @@     ## order_id -> image table
+//     fetcher_id: Number,     ## applies table -> isPicked true
+//     parcelStatus: Boolean    ## parcer_id
+//   } ]
+// }
+
+// ------------- /users/applylist -----------
+// {
+//   applylist: [ {
+//     order_id: Number,
+//     productName: String,
+//     destination: String,
+//     price: Number,
+//     due: String,
+//     status: String,
+//     imageUrl: String,
+//     parcelStatus: Boolean
+//   } ]
+// }
+
+// { _id: 10,
+//   name: '초코칩 쿠키',
+//   destination: '베트남',
+//   price: 13000,
+//   due: '2019-07-02',
+//   quantity: 10,
+//   preferParcel: true,
+//   description: '베트남에서 파는 초코칩 쿠키가 그렇게 맛나다면서요? 꼭 먹어보고 싶어요 사다주세요 빨리요 현기증나요',
+//   referenceUrl: null,
+//   buyer_id: 3,
+//   status: 0,
+//   parcel_id: null
+// }
