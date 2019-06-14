@@ -231,7 +231,9 @@ module.exports = {
 
               // 반환된 promise 데이터를 풀어내면서 responseData에 push한다.
               await Promise.all(tempListData).then(list => {
-                responseData.orderlist.push(list);
+                list.forEach(data => {
+                  responseData.orderlist.push(data);
+                });
               });
               res.status(201).send(responseData);
             })
@@ -305,7 +307,9 @@ module.exports = {
 
             // 반환된 promise 데이터를 풀어내면서 responseData에 push한다.
             await Promise.all(getList).then(list => {
-              responseData.applylist.push(list);
+              list.forEach(data => {
+                responseData.applylist.push(data);
+              });
             });
             res.status(201).send(responseData);
           }
