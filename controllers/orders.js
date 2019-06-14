@@ -1,5 +1,6 @@
 const db = require("../models");
 const passport = require("passport");
+const notification = require("../module/pushnotification");
 // const multer = require("multer");
 // const fs = require("fs");
 // const path = require("path");
@@ -174,9 +175,10 @@ module.exports = {
                 isPicked: false
               }
             })
-            .then(([applies, created]) => {
+            .then(async ([applies, created]) => {
               if (created) {
                 // 기존에 데이터가 없는 것을 확인 후 상태를 response 한다.
+                notification.addApplier(applies);
                 res.status(201).send({ success: true });
               } else {
                 // 기존에 데이터가 있는 것을 확인 후 에러와 함께 response 한다.
@@ -232,6 +234,7 @@ module.exports = {
                     .catch(err => {
                       res.status(201).send({ success: false, error: err });
                     });
+                  notification.pickFetcher(applies);
                 } else {
                   // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
                   res.status(201).send({
