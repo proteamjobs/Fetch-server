@@ -166,8 +166,42 @@ module.exports = {
     }
   },
   travellist: {
-    get: (req, res) => {
-      res.status(201).send("GET users/travellist OK!");
+    get: (req, res, next) => {
+      passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err) {
+          res.status(201).send(err);
+        }
+        if (info !== undefined) {
+          res.status(201).send(info.message);
+        } else {
+          db.travels
+            .findAll({
+              where: {
+                traveler_id: user._id
+              }
+            })
+            .then(travel => {
+              let responseData = {
+                travellist: []
+              };
+
+              travel.forEach(data => {
+                let tempArray = {
+                  destination: data.destination,
+                  departingDate: data.departureDate,
+                  arrivingDate: data.arrivalDate
+                };
+
+                responseData.travellist.push(tempArray);
+              });
+
+              res.status(201).send(responseData);
+            })
+            .catch(err => {
+              res.status(201).send(err);
+            });
+        }
+      })(req, res, next);
     }
   },
   orderlist: {
