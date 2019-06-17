@@ -8,5 +8,6 @@ router.get("/detail", controllers.orders.detail.get);
 router.post("/create", controllers.orders.create.post);
 router.post("/addapplier", controllers.orders.addapplier.post);
 router.post("/pickfetcher", controllers.orders.pickfetcher.post);
+router.get("/applierlist", controllers.orders.applierlist.get);
 
 module.exports = router;

@@ -253,5 +253,59 @@ module.exports = {
         }
       })(req, res, next);
     }
+  },
+  applierlist: {
+    get: (req, res, next) => {
+      passport.authenticate(
+        "jwt",
+        { session: false },
+        async (err, user, info) => {
+          if (err) {
+            res.status(200).send(err);
+          }
+          if (info !== undefined) {
+            res.status(200).send({
+              success: false,
+              error: info.message
+            });
+          } else {
+            let responseData = {
+              applierlist: []
+            };
+            let temp = await db.applies
+              .findAll({
+                where: {
+                  order_id: req.query.order_id
+                }
+              })
+              .then(data => {
+                return data;
+              })
+              .catch(err => {
+                res.status(200).send(err);
+              });
+
+            let tempArray = temp.map(data => {
+              return db.users
+                .findOne({ where: { _id: data.traveler_id } })
+                .then(async item => {
+                  return {
+                    traveler_id: item._id,
+                    travelerName: item.name,
+                    travelerImageUrl: item.image
+                  };
+                });
+            });
+
+            await Promise.all(tempArray).then(data => {
+              data.forEach(item => {
+                responseData.applierlist.push(item);
+              });
+            });
+            res.status(200).send(responseData);
+          }
+        }
+      )(req, res, next);
+    }
   }
 };
