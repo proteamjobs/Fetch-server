@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
   firebase.associate = function(models) {
     firebase.belongsTo(models.users, {
       foreignKey: "user_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
   };
 
