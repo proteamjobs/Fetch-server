@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
   applies.associate = function(models) {
     applies.belongsTo(models.users, {
       foreignKey: "traveler_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
     applies.belongsTo(models.orders, {
       foreignKey: "order_id",
