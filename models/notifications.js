@@ -41,11 +41,13 @@ module.exports = (sequelize, DataTypes) => {
   notifications.associate = function(models) {
     notifications.belongsTo(models.users, {
       foreignKey: "to_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
     notifications.belongsTo(models.users, {
       foreignKey: "from_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
     notifications.belongsTo(models.orders, {
       foreignKey: "order_id",
