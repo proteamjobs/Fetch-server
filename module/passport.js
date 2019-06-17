@@ -86,7 +86,7 @@ passport.use(
                         name: req.body.name,
                         provider: "fetcher",
                         image:
-                          "https://s3.ap-northeast-2.amazonaws.com/fetcher.fun/default/defaultProfile.png"
+                          "https://fetch-image-server.s3.ap-northeast-2.amazonaws.com/default/defaultProfile.png"
                       })
                       .then(user => {
                         return done(null, user);
