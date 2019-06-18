@@ -196,62 +196,88 @@ module.exports = {
   },
   pickfetcher: {
     post: (req, res, next) => {
-      passport.authenticate("jwt", { session: false }, (err, user, info) => {
-        if (err) {
-          res.status(201).send(err);
-        }
-        if (info !== undefined) {
-          res.status(201).send({
-            success: false,
-            error: info.message
-          });
-        } else {
-          // 먼저 실제로 applies 테이블에 데이터가 있는지 조회한다.
-          db.applies
-            .findOne({
-              where: {
-                traveler_id: req.body.traveler_id,
-                order_id: req.body.order_id
-              }
-            })
-            .then(applies => {
-              if (applies) {
-                // 만일 해당 row의 isPicked가 false 이면 업데이트 후 상태를 response 한다.
-                if (!applies.dataValues.isPicked) {
-                  db.applies
-                    .update(
-                      { isPicked: true },
-                      {
-                        where: {
-                          traveler_id: req.body.traveler_id,
-                          order_id: req.body.order_id
-                        }
-                      }
-                    )
-                    .then(() => {
-                      res.status(201).send({ success: true });
-                    })
-                    .catch(err => {
-                      res.status(201).send({ success: false, error: err });
-                    });
-                  notification.pickFetcher(applies);
-                } else {
-                  // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
-                  res.status(201).send({
-                    success: false,
-                    error: "ERROR :: Already isPicked is True!"
-                  });
-                }
-              } else {
-                // applies 테이블에 존재하지 않을 겅우 에러와 함께 response 한다.
-                res.status(201).send({
-                  success: false,
-                  error: "ERROR :: Don't have applies!"
-                });
-              }
+      passport.authenticate(
+        "jwt",
+        { session: false },
+        async (err, user, info) => {
+          if (err) {
+            res.status(201).send(err);
+          }
+          if (info !== undefined) {
+            res.status(201).send({
+              success: false,
+              error: info.message
             });
+          } else {
+            // 해당 order에 이미 매치가 완료됬는지 확인
+            let isCheck = await db.applies
+              .findAll({
+                where: {
+                  order_id: req.body.order_id,
+                  isPicked: true
+                }
+              })
+              .then(data => {
+                if (data.length === 0) {
+                  return true;
+                }
+                return false;
+              });
+
+            // 먼저 실제로 applies 테이블에 데이터가 있는지 조회한다.
+            if (isCheck) {
+              db.applies
+                .findOne({
+                  where: {
+                    traveler_id: req.body.traveler_id,
+                    order_id: req.body.order_id
+                  }
+                })
+                .then(applies => {
+                  if (applies) {
+                    // 만일 해당 row의 isPicked가 false 이면 업데이트 후 상태를 response 한다.
+                    if (!applies.dataValues.isPicked) {
+                      db.applies
+                        .update(
+                          { isPicked: true },
+                          {
+                            where: {
+                              traveler_id: req.body.traveler_id,
+                              order_id: req.body.order_id
+                            }
+                          }
+                        )
+                        .then(() => {
+                          res.status(201).send({ success: true });
+                        })
+                        .catch(err => {
+                          res.status(201).send({ success: false, error: err });
+                        });
+                      notification.pickFetcher(applies);
+                    } else {
+                      // 만약 해당 row의 isPicked가 true이면 에러와 함께 response 한다.
+                      res.status(201).send({
+                        success: false,
+                        error: "ERROR :: Already isPicked is True!"
+                      });
+                    }
+                  } else {
+                    // applies 테이블에 존재하지 않을 겅우 에러와 함께 response 한다.
+                    res.status(201).send({
+                      success: false,
+                      error: "ERROR :: Don't have applies!"
+                    });
+                  }
+                });
+            } else {
+              res.status(201).send({
+                success: false,
+                error: "ERROR :: This order is already picked!"
+              });
+            }
+          }
         }
-      })(req, res, next);
+      )(req, res, next);
     }
   },
   applierlist: {
