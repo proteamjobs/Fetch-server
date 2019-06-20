@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     applies.belongsTo(models.orders, {
       foreignKey: "order_id",
-      targetKey: "_id"
+      targetKey: "_id",
+      onDelete: "cascade"
     });
   };
 
